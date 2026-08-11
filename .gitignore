@@ -1,0 +1,56 @@
+### Spring Initializr ###
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### VS Code ###
+.vscode/
+
+### Maven ###
+.mvn/
+mvnw
+mvnw.cmd
+
+### Archivos de configuración con datos sensibles ###
+application-local.properties
+application-local.yml
+application-secrets.properties
+.env
+.env.local
+*.env
+
+### Logs ###
+*.log
+logs/
+spring.log
+
+### Base de datos ###
+*.db
+*.sqlite
+*.sql.bak
+*.mv.db
+*.trace.db
+
+### Archivos del sistema operativo ###
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+### Archivos temporales / compilados ###
+*.class
+*.jar
+*.war
+*.ear
+*.tmp
+*~
+
+### Frontend ###
+node_modules/
+package-lock.json
+dist/
+
+### Uploads o archivos generados en tiempo de ejecución ###
+uploads/
+temp/
