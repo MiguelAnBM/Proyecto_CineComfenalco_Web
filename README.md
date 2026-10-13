@@ -50,12 +50,6 @@ Requiere autenticación y utiliza el rol `ADMIN`.
 - Consultar estadísticas y gráficos.
 - Consultar historial de facturas.
 
-### 👑 Súper Administrador
-Cuenta única con credenciales propias y acceso al apartado especial de administración, utiliza el rol `SUPERADMIN`.
-
-- CRUD y desactivación de administradores.
-- Consulta de reportes por administrador.
-
 ---
 
 ## 🔄 Flujo principal de venta
@@ -79,7 +73,7 @@ Cuenta única con credenciales propias y acceso al apartado especial de administ
        💳 Pago simulado
        ┌─────┴─────┐
        ▼           ▼
-   ✅ Aprobado   ❌ Fallido
+   ✅ Exitoso   ❌ Fallido
        │           │
        ▼           ▼
 💺 Asientos   🔓Cancelar
@@ -107,14 +101,14 @@ También se permiten compras **únicamente de confitería**, sin función ni ent
 
 ## 💰 Facturación, precios e IVA
 
-- Los precios configurados se consideran **precios finales con IVA incluido**.
-- El sistema presenta conceptualmente la base y el componente de IVA del **19 %**.
+- El sistema presenta conceptualmente la base y el componente de IVA.
 - El precio de una entrada se compone de:
   - **Precio base**
   - **Recargo según el tipo de sala**
+  - **IVA**
 - Los cambios futuros de precios **no modifican operaciones históricas**.
 - La factura conserva el precio aplicado en cada línea de venta.
-- Una factura aprobada contiene identificación, operación, entradas, confitería, totales y método de pago.
+- Una factura exitosa contiene identificación, operación, entradas, confitería, totales y método de pago.
 
 ### 💳 Métodos de pago
 
@@ -138,7 +132,7 @@ El panel administrativo debe presentar **gráficos y tablas** con información c
 | 🎞️ **Películas** | Películas con mayor cantidad de entradas |
 | 🕐 **Funciones** | Funciones con mayor cantidad de entradas |
 | 🍿 **Productos** | Cantidad vendida y productos más vendidos |
-| 🏛️ **Salas** | Ocupación por sala y función |
+| 🏛️ **Salas** | Ocupación por sala |
 | 🎟️ **Taquilleros** | Ventas asociadas |
 | 🧾 **Facturas** | Historial y detalle |
 
@@ -257,9 +251,9 @@ Por ello:
 
 ### Requisitos
 
-- ☕ Java — **versión por definir**
-- 📦 Maven — **versión por definir**
-- 🗄️ MySQL — **versión por definir**
+- ☕ Java — **21**
+- 📦 Spring Boot — **4.1.1**
+- 🗄️ MySQL — **8.0**
 - 🔧 Git
 - 💻 IDE compatible con Spring Boot
 
