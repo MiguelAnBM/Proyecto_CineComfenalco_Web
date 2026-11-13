@@ -1,10 +1,10 @@
-package com.app.cinecomfenalco;
+package com.comfenalco.cine;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CinecomfenalcoApplicationTests {
+class CineApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,13 +1,13 @@
-package com.app.cinecomfenalco;
+package com.comfenalco.cine;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CinecomfenalcoApplication {
+public class CineApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CinecomfenalcoApplication.class, args);
+		SpringApplication.run(CineApplication.class, args);
 	}
 
 }
