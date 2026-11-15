@@ -1,0 +1,23 @@
+package com.comfenalco.cine.repository;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.comfenalco.cine.model.ProductoConfiteria;
+import com.comfenalco.cine.model.enums.CategoriaProducto;
+import com.comfenalco.cine.model.enums.EstadoProducto;
+
+public interface ProductoConfiteriaRepository extends JpaRepository<ProductoConfiteria, Long> {
+
+    boolean existsByNombreIgnoreCase(String nombre);
+
+    boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
+
+    List<ProductoConfiteria> findAllByOrderByNombre();
+
+    List<ProductoConfiteria> findByCategoriaOrderByNombre(CategoriaProducto categoria);
+
+    List<ProductoConfiteria> findByIdInAndEstado(Collection<Long> ids, EstadoProducto estado);
+}

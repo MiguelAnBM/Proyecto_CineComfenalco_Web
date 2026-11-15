@@ -11,11 +11,10 @@ import jakarta.validation.constraints.NotNull;
 //Se crea la entidad detalles_confitería ya que se estará almacenando datos de este objeto en la BD
 @Entity
 /*
-Se crea una tabla cuyo nombre es detalles_confitería, en esta 
+Se crea una tabla cuyo nombre es detalles_confiteria, en esta 
 se utiliza el uniqueconstraints como un contrato en el que
-se pide que los datos pasados cumplan con la condición de ser únicos, 
-en este caso son "id_factura" e "id_producto"*/ 
-@Table(
+se pide que la pareja "id_factura" e "id_producto" no se repita*/ 
+@Table( 
     name = "detalles_confiteria",
     uniqueConstraints = @UniqueConstraint(
         name = "uq_conf_factura_producto", 
@@ -45,7 +44,9 @@ public class DetalleConfiteria {
     @NotNull(message = "La factura no puede ser nula")
 
 
-    //Se crea una FK para referenciar a la clase/tabla factura
+    /*Se crea una FK para referenciar a la clase/tabla factura. ON DELETE RESTRICT no deja
+    borrar una factura que tenga detalles, y ON UPDATE CASCADE actualiza el id aquí si
+    cambia en la factura. Con LAZY la factura se carga solo cuando se necesita */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
         name = "id_factura",
@@ -57,7 +58,7 @@ public class DetalleConfiteria {
                 "ON DELETE RESTRICT ON UPDATE CASCADE"
         )
     )
-    //Se llama a la clase factura, para hacer la relación entre entidades
+    //Se referencia la clase factura, para hacer la relación entre entidades
     private Factura factura;
 
     
@@ -75,7 +76,8 @@ public class DetalleConfiteria {
         )
     )
     
-    //Se llama a la clase ProductoConfiteria, para hacer la relación entre entidades
+    //Se crea una FK para referenciar a la clase/tabla productos_confiteria,
+    //  con las mismas reglas de borrado y actualización que la factura
     private ProductoConfiteria productoConfiteria;
 
     
@@ -100,7 +102,7 @@ public class DetalleConfiteria {
     protected DetalleConfiteria() {
 
     }
-    //Se está validando en el constructor que el productoConfitería y la cantidad no sean nulas
+    //Se está validando en el constructor que el productoConfitería y la cantidad no sean nulos
     public DetalleConfiteria(ProductoConfiteria productoConfiteria, Integer cantidad) {
         if (productoConfiteria == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo");
@@ -112,6 +114,7 @@ public class DetalleConfiteria {
 
         this.productoConfiteria = productoConfiteria;
         this.cantidad = cantidad;
+        //Se copia el precio al momento de la venta, si el precio del producto cambia después, las facturas viejas no se alteran
         this.precioUnitario = productoConfiteria.getPrecio();
     }
 

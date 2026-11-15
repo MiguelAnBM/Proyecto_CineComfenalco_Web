@@ -44,7 +44,9 @@ public class Factura {
     @Column(nullable = false)
     private Long version;
 
-    //Se crea una FK para referenciar a la clase/tabla usuarios
+    /*Se crea una FK para referenciar a la clase/tabla usuarios
+     ON DELETE RESTRICT no deja borrar un usuario que tenga facturas, 
+     y ON UPDATE CASCADE actualiza el id aquí si cambia en usuarios*/
     @NotNull(message = "El usuario no puede ser nulo")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
@@ -57,20 +59,22 @@ public class Factura {
                 "ON DELETE RESTRICT ON UPDATE CASCADE"
         )
     )
-    //Se llama a la clase usuario, para hacer la relación entre entidades
+    //Se referencia la clase usuario, para hacer la relación entre entidades
     private Usuario usuario;
     
-    //CURRENT_TIMESTAMP(6) hace que segenere la marca de tiempo con 6 dígitos de precisión 
+    //CURRENT_TIMESTAMP(6) hace que se genere la marca de tiempo con 6 dígitos de precisión 
+    //Con updatable = false no se puede modificar después de crearse
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     @Column(name = "fecha_hora", nullable = false, updatable = false)
     private LocalDateTime fechaHora;
     
     @NotNull(message = "El método de pago es obligatorio")
-    //Se convierte el tipo enum en un string
+    //Se convierte el tipo enum en un string, se guarda el nombre y no su posición
     @Enumerated(EnumType.STRING)
     @Column(name = "metodo_pago", nullable = false, length = 10)
     private MetodoPago metodoPago;
-
+ 
+    //El nombre y el correo del cliente son opcionales
     @Size(max = 100)
     @Column(name = "nombre_cliente", length = 100)
     private String nombreCliente;
@@ -81,15 +85,25 @@ public class Factura {
     @Column(name = "correo_cliente", length = 150)
     private String correoCliente;
 
+    /*Este es el lado de la relación de uno a muchos, con mappedBy se indica que este lado NO es el dueño,
+    el dueño es el atributo "factura" de DetalleBoleto, que es donde está la FK.
+
+    Con cascade lo que le suceda a la entidad padre le va a pasar a sus entidades hijas,
+     es decir que, las operaciones de la factura se van a propagar a DetalleBoleto y DetalleConfiteria.
+    PERSIST: Para guardar una factura, MERGE: Al actualizar una factura*/
     @OneToMany(mappedBy = "factura", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DetalleBoleto> boletos = new ArrayList<>();
 
+    
+    //Igual que los boletos, pero para los productos de confitería
     @OneToMany(mappedBy = "factura", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<DetalleConfiteria> productos = new ArrayList<>();
 
-    // Por si se anula una factura, para liberar asientos comprados
+    // Se valida que el estado no sea nulo, por defecto estará emitida 
+    // (el constructor le asigna EMITIDA y @ColumnDefault lo deja como valor por defecto en la BD)
     @NotNull
     @ColumnDefault("'EMITIDA'")
+    //Se convierte el tipo enum en un string
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 10)
     private EstadoFactura estado;
@@ -101,6 +115,7 @@ public class Factura {
         
     }
 
+
     public Factura(Usuario usuario, MetodoPago metodoPago, String nombreCliente,
             String correoCliente) {
         this.usuario = usuario;
@@ -109,7 +124,7 @@ public class Factura {
         this.correoCliente = correoCliente;
         this.estado = EstadoFactura.EMITIDA;
     }
-
+    //Se establece automáticamente la fecha y hora en una columna JPA antes de guardar la entidad
     @PrePersist
     private void asignarFechaHora() {
         if (fechaHora == null) {
@@ -118,15 +133,17 @@ public class Factura {
     }
 
     // Mantiene sincronizados los dos lados de la relación
+    //  Agrega el boleto a la lista y le asigna esta factura (así factura_id no queda en NULL)
     public void agregarBoleto(DetalleBoleto boleto) {
         if (boleto == null) {
             throw new IllegalArgumentException("El boleto no puede ser nulo");
         }
-
+        //Lo mete en la lista de la factura
         boletos.add(boleto);
+        //Le asigna esta factura al boleto
         boleto.setFactura(this);
     }
-
+    //Lo anterior sucede nuevamente aquí
     public void agregarProducto(DetalleConfiteria detalle) {
         if (detalle == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo");
@@ -135,25 +152,32 @@ public class Factura {
         productos.add(detalle);
         detalle.setFactura(this);
     }
-
+    //Este getter devuelve la lista de productos
     public List<DetalleConfiteria> getProductos() {
+        // Al usar Collections.unmodifiableList se devuelve una vista de solo lectura de la lista
+        //Así no se puede agregar por fuera sin pasar por agregarProducto
         return Collections.unmodifiableList(productos);
     }
 
+    //Se calcula el total de la factura (boletos + productos)
     public BigDecimal calcularTotal() {
+        //Se usa BigDecimal porque es dinero y no pierde precisión como el double
         BigDecimal total = BigDecimal.ZERO;
         
+         //Los dos bucles solo van sumando sobre el mismo total
+        //Se recorre cada boleto de la factura, se toma su precio unitario y si no es null, lo suma
         for (DetalleBoleto boleto : boletos) {
             BigDecimal precio = boleto.getPrecioUnitario();
             if (precio != null) {
                 total = total.add(precio);
             }
-        }
-
+        } 
+        //Recorre cada producto de confitería, y se hacen los calculos con calcularSubtotal
         for (DetalleConfiteria detalle : productos) {
             total = total.add(detalle.calcularSubtotal());
         }
-
+       
+        //Se devuelve la suma final, total = suma de precios de boletos + suma de subtotales de productos
         return total;
     }
 
@@ -162,6 +186,7 @@ public class Factura {
         return Collections.unmodifiableList(boletos);
     }
 
+    //Cambia el estado a ANULADA, guarda la fecha de anulación y libera los asientos
     public void anular() {
         if (estado == EstadoFactura.ANULADA) {
             throw new IllegalStateException("La factura ya está anulada");
