@@ -270,9 +270,7 @@ Pasos:
    GRANT ALL PRIVILEGES ON cinecomfenalco_db.* TO 'cine_app'@'localhost';
    ```
 
-2. Ejecuta `docs/archive/cinecomfenalco_schema.sql` para crear las tablas y cargar los datos de catálogo (80 asientos, géneros, tipos de sala y configuración de precio/IVA). El script crea la base `cinecomfenalco`; renómbrala o apunta `spring.datasource.url` a ella según prefieras. Está basado en el Documento 01 v0.1 y requiere MySQL 8.0.16+.
-
-3. El script no trae usuarios de prueba: el insert del administrador viene comentado (requiere un hash BCrypt). Crea el administrador manualmente insertando su nombre, el rol ADMINISTRADOR y un hash generado (por ejemplo, con `BCryptPasswordEncoder`). Hazlo solo en local.
+2. Ejecuta `docs/archive/cinecomfenalco_datos_prueba.sql` para cargar los datos de prueba.
 
 ### Ejecutar
 
