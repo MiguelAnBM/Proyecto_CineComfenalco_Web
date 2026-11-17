@@ -250,7 +250,7 @@ cd Proyecto_CineComfenalco_Web
 
 ### Configuración de base de datos
 
-El archivo `cine/src/main/resources/application.properties` solo define el nombre de la aplicación; las credenciales no se versionan (ver `.gitignore`). Crea un `application-local.properties` (o define variables de entorno) con tus datos:
+El archivo `cine/src/main/resources/application.properties` debe verse así, no lo modifiques y continúa con los siguientes pasos tras confirmar:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/cinecomfenalco_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
@@ -270,14 +270,14 @@ Pasos:
    GRANT ALL PRIVILEGES ON cinecomfenalco_db.* TO 'cine_app'@'localhost';
    ```
 
-2. Ejecuta `docs/archive/cinecomfenalco_datos_prueba.sql` para cargar los datos de prueba.
+2. Ejecuta el programa:
 
-### Ejecutar
+    ```bash
+    cd cine
+    ./mvnw spring-boot:run
+    ```
 
-```bash
-cd cine
-./mvnw spring-boot:run
-```
+3. Ejecuta los datos de prueba a través del script ubicado en `docs/archive/cinecomfenalco_datos_prueba.sql` y recarga el navegador
 
 La aplicación queda disponible en `http://localhost:8080`. Rutas públicas: inicio, cartelera, funciones, boletos, cafetería. Rutas protegidas (requieren login de ADMINISTRADOR): `/administracion/**` y `/reportes/**` (`/login`).
 
