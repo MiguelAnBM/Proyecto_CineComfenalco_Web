@@ -255,7 +255,7 @@ El archivo `cine/src/main/resources/application.properties` solo define el nombr
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/cinecomfenalco_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
 spring.datasource.username=cine_app
-spring.datasource.password=tu_password
+spring.datasource.password=cine
 spring.jpa.hibernate.ddl-auto=update
 ```
 
